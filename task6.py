@@ -1,5 +1,4 @@
-import copy
-from helper import Helper
+from datetime import datetime
 
 
 class Task6:
@@ -14,102 +13,61 @@ class Task6:
         return self.__class__.__task_number
 
     def start_task(self):
-        helper = Helper()
         print(f'------------------------- Задача {self.task_number} -------------------------')
-        print('Даны три символьные матрицы. '
-              '\n a) ту матрицу, где есть хотя бы одна гласная - транспонировать; '
-              '\n b) в той матрице, на главной диагонали которой все цифры, найти наименьшую и удалить '
-              '\nсоответствующую строку')
+        print('Дан типизированный файл f, содержащий различные даты. Каждая дата - это число, месяц и год. Найти: '
+              '\n   а) год с наименьшим номером;'
+              '\n   б) все весенние даты;'
+              '\n   в) самую позднюю дату.'
+              'Найденные данные записать в файл g')
         print('----------------------------------------------------------')
-        print('Исходные матрицы')
-        random_matrix_1 = helper.set_random_symbol_matrix(5)
-        random_matrix_2 = helper.set_random_symbol_matrix(5)
-        random_matrix_3 = helper.set_random_symbol_matrix(5)
-        helper.print_list_symbol_matrix([random_matrix_1, random_matrix_2, random_matrix_3])
-        print('----------------------------------------------------------')
-        print('Вариант A')
-        task_a_matrix_1, task_a_matrix_2, task_a_matrix_3 = self.__check_a(random_matrix_1, random_matrix_2,
-                                                                           random_matrix_3)
-        helper.print_list_symbol_matrix([task_a_matrix_1, task_a_matrix_2, task_a_matrix_3])
-        print('----------------------------------------------------------')
-        print('Вариант B')
-        task_b_matrix_1, task_b_matrix_2, task_b_matrix_3 = self.__check_b(random_matrix_1, random_matrix_2,
-                                                                           random_matrix_3)
-        helper.print_list_symbol_matrix([task_b_matrix_1, task_b_matrix_2, task_b_matrix_3])
+        dates = self.__get_dates()
+        self.__do_task_a(dates)
+        self.__do_task_b(dates)
+        self.__do_task_c(dates)
+        print(f'Файл сохранен как files/outputs/task_{self.task_number}_output.txt')
         print('----------------------------------------------------------')
         self.task_ended_callback(self.task_number)
 
-    def __check_a(self, matrix_1: [[]], matrix_2: [[]], matrix_3: [[]]) -> tuple[[[]], [[]], [[]]]:
+    def __get_dates(self) -> []:
         try:
-            new_matrix_1 = copy.deepcopy(matrix_1)
-            new_matrix_2 = copy.deepcopy(matrix_2)
-            new_matrix_3 = copy.deepcopy(matrix_3)
-            if self.__is_has_vowel(matrix_1):
-                new_matrix_1 = self.__transpose_matrix(matrix_1)
-            if self.__is_has_vowel(matrix_2):
-                new_matrix_2 = self.__transpose_matrix(matrix_2)
-            if self.__is_has_vowel(matrix_3):
-                new_matrix_3 = self.__transpose_matrix(matrix_3)
-            return new_matrix_1, new_matrix_2, new_matrix_3
+            dates_array = [datetime]
+            with open(f'files/inputs/task_{self.task_number}_input.txt') as f:
+                for line in f:
+                    date_line = line.split('\n')[0]
+                    dates_array.append(datetime.strptime(date_line, '%d/%m/%Y'))
+            return dates_array
         except Exception as e:
             print(f'Ошибка: {e}')
 
-    def __check_b(self, matrix_1: [[]], matrix_2: [[]], matrix_3: [[]]) -> tuple[[[]], [[]], [[]]]:
+    def __do_task_a(self, dates: [datetime]):
         try:
-            new_matrix_1 = copy.deepcopy(matrix_1)
-            new_matrix_2 = copy.deepcopy(matrix_2)
-            new_matrix_3 = copy.deepcopy(matrix_3)
-            if self.__is_diagonal_with_numbers(matrix_1):
-                new_matrix_1 = self.__remove_min_number(matrix_1)
-            if self.__is_diagonal_with_numbers(matrix_2):
-                new_matrix_2 = self.__remove_min_number(matrix_2)
-            if self.__is_diagonal_with_numbers(matrix_3):
-                new_matrix_3 = self.__remove_min_number(matrix_3)
-            return new_matrix_1, new_matrix_2, new_matrix_3
+            min_year = min([date.year for date in dates][2:])
+            text_to_append = f'а) Год с наименьшим номером - {min_year}\n'
+            self.__append_to_file(text_to_append)
         except Exception as e:
             print(f'Ошибка: {e}')
 
-    def __is_has_vowel(self, matrix: [[]]) -> bool:
+    def __do_task_b(self, dates: [datetime]):
         try:
-            for row in matrix:
-                for i in range(0, len(row)):
-                    if self.__is_vowel(str(row[i])):
-                        return True
-            return False
+            spring_dates = [date for date in dates if date.month in [3, 4, 5]][2:]
+            text_to_append = f'б) Все весенние даты:\n'
+            for date in spring_dates:
+                text_to_append = text_to_append + f'{date.day}/{date.month}/{date.year}\n'
+            self.__append_to_file(text_to_append)
         except Exception as e:
             print(f'Ошибка: {e}')
 
-    @staticmethod
-    def __remove_min_number(matrix: [[]]) -> [[]]:
+    def __do_task_c(self, dates: [datetime]):
         try:
-            changed_matrix = copy.deepcopy(matrix)
-            diagonal = [int(changed_matrix[i][i]) for i in range(len(changed_matrix))]
-            min_value = int(min(diagonal))
-            for i in range(len(changed_matrix)):
-                if int(changed_matrix[i][i]) == min_value:
-                    changed_matrix[i][i] = ' '
-            return changed_matrix
+            max_date = max(dates[2:])
+            text_to_append = f'в) Самая поздняя дата - {max_date.day}/{max_date.month}/{max_date.year}'
+            self.__append_to_file(text_to_append)
         except Exception as e:
             print(f'Ошибка: {e}')
 
-    @staticmethod
-    def __transpose_matrix(matrix: [[]]) -> [[]]:
-        zipped_rows = zip(*matrix)
-        return [list(row) for row in zipped_rows]
-
-    @staticmethod
-    def __is_vowel(letter: str) -> bool:
+    def __append_to_file(self, text_to_append: str):
         try:
-            return letter.lower() in ['a', 'e', 'i', 'o', 'u']
-        except Exception as e:
-            print(f'Ошибка: {e}')
-
-    @staticmethod
-    def __is_diagonal_with_numbers(matrix: [[]]) -> bool:
-        try:
-            diagonal = [matrix[i][i] for i in range(len(matrix))]
-            if all(str(element).isnumeric() for element in diagonal):
-                return True
-            return False
+            with open(f'files/outputs/task_{self.task_number}_output.txt', 'a') as output:
+                output.write(text_to_append)
         except Exception as e:
             print(f'Ошибка: {e}')

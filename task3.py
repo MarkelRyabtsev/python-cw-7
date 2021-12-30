@@ -1,9 +1,4 @@
-import math
-from helper import Helper, Point
-
-
 class Task3:
-
     __task_number = 3
 
     def __init__(self, task_ended_callback):
@@ -14,39 +9,94 @@ class Task3:
         return self.__class__.__task_number
 
     def start_task(self):
-        helper = Helper()
         print(f'------------------------- Задача {self.task_number} -------------------------')
-        print('Даны действительные числа х1, у1, х2, у2, …,х10, у10. Найти периметр десятиугольника, вершины '
-              '\nкоторого имеют соответственно координаты (х1, у1), (х2, у2), …, (х10, у10). (Определить процедуру '
-              '\nвычисления расстояния между двумя точками, заданными своими координатами.) ')
+        print('Дан текстовый файл f, компоненты которого являются целыми числами. Никакая из компонент файла'
+              '\nне равна нулю. Файл f содержит столько же отрицательных чисел, сколько и положительных. Используя'
+              '\nвспомогательный файл h, переписать компоненты файла f в файл g так, чтобы в файле g:'
+              '\n   а) не было двух соседних чисел с одинаковым знаком;'
+              '\n   б) вначале шли положительные, затем отрицательные числа;'
+              '\n   в) числа шли в следующем порядке: два положительных, два отрицательных, два положительных, '
+              '\nдва отрицательных и т.д. (предполагается, что число компонент в файле f делится на 4). ')
         print('----------------------------------------------------------')
-        point_list = list()
-        for i in range(0, 10):
-            point_list.append(helper.get_random_point())
-            print(f'Точка {i + 1} = ({point_list[i].x}, {point_list[i].y})')
+        numbers = self.__get_numbers()
         print('----------------------------------------------------------')
-        vector_list = list()
-        for i in range(0, 9):
-            if i != 9:
-                vector_list.append(self.__get_vector_length(point_list[i], point_list[i + 1]))
-            else:
-                vector_list.append(self.__get_vector_length(point_list[0], point_list[i]))
-            print(f'Длина вектора {i + 1} = {vector_list[i]}')
+        self.__do_task_a(numbers)
         print('----------------------------------------------------------')
-        print(f'Периметр = {self.__get_perimeter(vector_list)}')
+        self.__do_task_b(numbers)
+        print('----------------------------------------------------------')
+        self.__do_task_c(numbers)
         print('----------------------------------------------------------')
         self.task_ended_callback(self.task_number)
 
-    @staticmethod
-    def __get_vector_length(first: Point, second: Point) -> float:
+    def __get_numbers(self) -> []:
         try:
-            return round(math.sqrt((second.x - first.x) ** 2 + (second.y - first.y) ** 2), 2)
+            numbers_array = []
+            with open(f'files/inputs/task_{self.task_number}_input.txt') as f:
+                for line in f:
+                    splitted_line = line.split(' ')
+                    for number in splitted_line:
+                        numbers_array.append(int(number))
+            return numbers_array
         except Exception as e:
             print(f'Ошибка: {e}')
 
-    @staticmethod
-    def __get_perimeter(vector_list: []) -> float:
+    def __do_task_a(self, numbers: []):
         try:
-            return sum(vector_list)
+            filtered_numbers_positive = []
+            filtered_numbers_negative = []
+            for number in numbers:
+                if number > 0:
+                    filtered_numbers_positive.append(number)
+                else:
+                    filtered_numbers_negative.append(number)
+            filtered_numbers_joined = [val for pair in zip(filtered_numbers_positive, filtered_numbers_negative) for val
+                                       in pair]
+            self.__save_file(filtered_numbers_joined, 'a')
+        except Exception as e:
+            print(f'Ошибка: {e}')
+
+    def __do_task_b(self, numbers: []):
+        try:
+            filtered_numbers_positive = []
+            filtered_numbers_negative = []
+            for number in numbers:
+                if number > 0:
+                    filtered_numbers_positive.append(number)
+                else:
+                    filtered_numbers_negative.append(number)
+            filtered_numbers_joined = filtered_numbers_positive + filtered_numbers_negative
+            self.__save_file(filtered_numbers_joined, 'b')
+        except Exception as e:
+            print(f'Ошибка: {e}')
+
+    def __do_task_c(self, numbers: []):
+        try:
+            filtered_numbers_positive = []
+            filtered_numbers_negative = []
+            for number in numbers:
+                if number > 0:
+                    filtered_numbers_positive.append(number)
+                else:
+                    filtered_numbers_negative.append(number)
+            filtered_numbers_joined = []
+            for pair in zip(zip(filtered_numbers_positive[0::2], filtered_numbers_positive[1::2]),
+                            zip(filtered_numbers_negative[0::2], filtered_numbers_negative[1::2])):
+                list_of_pairs = [i for t in pair for i in t]
+                for ar in list_of_pairs:
+                    filtered_numbers_joined.append(ar)
+            self.__save_file(filtered_numbers_joined, 'c')
+        except Exception as e:
+            print(f'Ошибка: {e}')
+
+    def __save_file(self, numbers: [], task_variant: str):
+        try:
+            with open(f'files/outputs/task_{self.task_number}_output_{task_variant}.txt', "w") as output:
+                if len(numbers) == 0:
+                    output.write('Отсутствуют.')
+                else:
+                    for number in numbers:
+                        output.write("".join(
+                            f'{number}') + "\n")
+            print(f'{task_variant}) Файл сохранен как files/outputs/task_{self.task_number}_output_{task_variant}.txt')
         except Exception as e:
             print(f'Ошибка: {e}')

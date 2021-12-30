@@ -1,7 +1,3 @@
-import math
-import random
-
-
 class Task5:
 
     __task_number = 5
@@ -15,27 +11,43 @@ class Task5:
 
     def start_task(self):
         print(f'------------------------- Задача {self.task_number} -------------------------')
-        print('Даны действительные числа a, b, c, d, e - стороны пятиугольника. Найти площадь пятиугольника. '
-              '\n(Определить процедуру вычисления площади треугольника по его сторонам.) ')
+        print('Дан текстовый файл f, компоненты которого являются целыми числами. Получить файл g, образованный из'
+              '\nфайла f исключением повторных вхождений одного и того же числа')
         print('----------------------------------------------------------')
-        random_side = random.randint(1, 10)
-        print(f'Сторона пятиугольника: {random_side}')
-        print('----------------------------------------------------------')
-        print(f'Площадь пятиугольника: {self.__get_area(random_side)}')
+        numbers = self.__get_numbers()
+        self.__remove_duplicate_and_safe(numbers)
         print('----------------------------------------------------------')
         self.task_ended_callback(self.task_number)
 
-    def __get_area(self, side: int) -> float:
+    def __get_numbers(self) -> []:
         try:
-            height = self.__get_height(side)
-            triangle_area = ((side / 2) * height) / 2
-            return round(triangle_area * 5, 2)
+            numbers_array = []
+            with open(f'files/inputs/task_{self.task_number}_input.txt') as f:
+                for line in f:
+                    splitted_line = line.split(' ')
+                    for number in splitted_line:
+                        if number.isnumeric():
+                            numbers_array.append(int(number))
+            return numbers_array
         except Exception as e:
             print(f'Ошибка: {e}')
 
-    @staticmethod
-    def __get_height(side: int) -> float:
+    def __remove_duplicate_and_safe(self, numbers: []):
         try:
-            return side / math.tan(36 * math.pi / 180)  # 360° / 10(кол-во треугольников в пятиугольнике) = 36°
+            filtered_numbers = list(dict.fromkeys(numbers))
+            self.__save_file(filtered_numbers)
+        except Exception as e:
+            print(f'Ошибка: {e}')
+
+    def __save_file(self, numbers: []):
+        try:
+            with open(f'files/outputs/task_{self.task_number}_output.txt', "w") as output:
+                if len(numbers) == 0:
+                    output.write('Отсутствуют.')
+                else:
+                    for number in numbers:
+                        output.write("".join(
+                            f'{number}') + "\n")
+            print(f'Файл сохранен как files/outputs/task_{self.task_number}_output.txt')
         except Exception as e:
             print(f'Ошибка: {e}')

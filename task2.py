@@ -1,5 +1,4 @@
 import math
-from helper import Helper, Point
 
 
 class Task2:
@@ -14,48 +13,75 @@ class Task2:
         return self.__class__.__task_number
 
     def start_task(self):
-        helper = Helper()
         print(f'------------------------- Задача {self.task_number} -------------------------')
-        print('Используя функцию нахождения длины отрезка (по теореме Пифагора), найти длину периметра и площадь '
-              '\nтреугольника, заданного координатами своих вершин')
+        print('Дан текстовый файл f, компоненты которого являются целыми числами. Получить в файле g все '
+              '\nкомпоненты файла f:'
+              '\n   а) являющимися четными числами;'
+              '\n   б) делящиеся на 3 и не делящиеся на 7;'
+              '\n   в) являющимися точными квадратами.')
         print('----------------------------------------------------------')
-        a_point = helper.get_random_point()
-        b_point = helper.get_random_point()
-        c_point = helper.get_random_point()
-        print(f'A({a_point.x}, {a_point.y})')
-        print(f'B({b_point.x}, {b_point.y})')
-        print(f'C({c_point.x}, {c_point.y})')
+        numbers = self.__get_numbers()
         print('----------------------------------------------------------')
-        ab_vector = self.__get_vector_length(a_point, b_point)
-        bc_vector = self.__get_vector_length(b_point, c_point)
-        ac_vector = self.__get_vector_length(a_point, c_point)
-        print(f'Длина AB = {ab_vector}')
-        print(f'Длина BC = {bc_vector}')
-        print(f'Длина AC = {ac_vector}')
+        self.__do_task_a(numbers)
         print('----------------------------------------------------------')
-        print(f'Периметр = {self.__get_perimeter(ab_vector, bc_vector, ac_vector)}')
-        print(f'Площадь = {self.__get_area(ab_vector, bc_vector, ac_vector)}')
+        self.__do_task_b(numbers)
+        print('----------------------------------------------------------')
+        self.__do_task_c(numbers)
         print('----------------------------------------------------------')
         self.task_ended_callback(self.task_number)
 
-    @staticmethod
-    def __get_vector_length(first: Point, second: Point) -> float:
+    def __get_numbers(self) -> []:
         try:
-            return round(math.sqrt((second.x - first.x) ** 2 + (second.y - first.y) ** 2), 2)
+            numbers_array = []
+            with open(f'files/inputs/task_{self.task_number}_input.txt') as f:
+                for line in f:
+                    splitted_line = line.split(' ')
+                    for number in splitted_line:
+                        if number.isnumeric():
+                            numbers_array.append(int(number))
+            return numbers_array
         except Exception as e:
             print(f'Ошибка: {e}')
 
-    @staticmethod
-    def __get_perimeter(vector_1: float, vector_2: float, vector_3: float) -> float:
+    def __do_task_a(self, numbers: []):
         try:
-            return round(vector_1 + vector_2 + vector_3, 2)
+            filtered_numbers = []
+            for number in numbers:
+                if number % 2 == 0:
+                    filtered_numbers.append(number)
+            self.__save_file(filtered_numbers, 'a')
         except Exception as e:
             print(f'Ошибка: {e}')
 
-    @staticmethod
-    def __get_area(vector_1: float, vector_2: float, vector_3: float) -> float:
+    def __do_task_b(self, numbers: []):
         try:
-            half_perimeter = (vector_1 + vector_2 + vector_3) / 2
-            return round(math.sqrt(half_perimeter * (half_perimeter - vector_1) * (half_perimeter - vector_2) * (half_perimeter - vector_3)), 2)
+            filtered_numbers = []
+            for number in numbers:
+                if number % 3 == 0 and number % 7 != 0:
+                    filtered_numbers.append(number)
+            self.__save_file(filtered_numbers, 'b')
+        except Exception as e:
+            print(f'Ошибка: {e}')
+
+    def __do_task_c(self, numbers: []):
+        try:
+            filtered_numbers = []
+            for number in numbers:
+                if math.sqrt(number).is_integer():
+                    filtered_numbers.append(number)
+            self.__save_file(filtered_numbers, 'c')
+        except Exception as e:
+            print(f'Ошибка: {e}')
+
+    def __save_file(self, numbers: [], task_variant: str):
+        try:
+            with open(f'files/outputs/task_{self.task_number}_output_{task_variant}.txt', "w") as output:
+                if len(numbers) == 0:
+                    output.write('Отсутствуют.')
+                else:
+                    for number in numbers:
+                        output.write("".join(
+                            f'{number}') + "\n")
+            print(f'{task_variant}) Файл сохранен как files/outputs/task_{self.task_number}_output_{task_variant}.txt')
         except Exception as e:
             print(f'Ошибка: {e}')

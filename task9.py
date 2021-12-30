@@ -1,7 +1,3 @@
-import math
-import random
-
-
 class Task9:
 
     __task_number = 9
@@ -15,45 +11,50 @@ class Task9:
 
     def start_task(self):
         print(f'------------------------- Задача {self.task_number} -------------------------')
-        print('Даны длины a,b и c сторон некоторого треугольника. Найти медианы треугольника, сторонами которого '
-              '\nявляются медианы исходного треугольника. Длина медианы, проведенной к стороне a, равна'
-              '\n1/2 * √(2b^2 + 2c^2 - a^2)')
+        print('Дан текстовый файл f, компоненты которого являются целыми числами. Записать в файл g наибольшее'
+              '\nзначение первых пяти компонент файла f, затем - следующих пяти компонент и т.д. Если в последней'
+              '\nгруппе окажется менее пяти компонент, то последняя компонента файла g должна быть равна наибольшей'
+              '\nиз компонент файла f, образующих последнюю (неполную) группу')
         print('----------------------------------------------------------')
-        a, b, c = self.__get_existing_triangle()
-        print(f'Стороны треугольника: a = {a}, b = {b}, c = {c}')
+        numbers = self.__get_numbers()
         print('----------------------------------------------------------')
-        median_a, median_b, median_c = self.__get_medians(a, b, c)
-        print(f'Медианы треугольника: Ma = {median_a}, Mb = {median_b}, Mc = {median_c}')
-        median_a_new, median_b_new, median_c_new = self.__get_medians(median_a, median_b, median_c)
-        print(f'Медианы треугольника, сторонами которого являются медианы исходного '
-              f'\nтреугольника : Ma\' = {median_a_new}, Mb\' = {median_b_new}, Mc\' = {median_c_new}')
+        self.__do_task(numbers)
         print('----------------------------------------------------------')
         self.task_ended_callback(self.task_number)
 
-    @staticmethod
-    def __get_medians(a: float, b: float, c: float) -> tuple[float, float, float]:
+    def __get_numbers(self) -> []:
         try:
-            median_a = (math.sqrt(2 * (b ** 2) + 2 * (c ** 2) - a ** 2)) / 2
-            median_b = (math.sqrt(2 * (a ** 2) + 2 * (c ** 2) - b ** 2)) / 2
-            median_c = (math.sqrt(2 * (a ** 2) + 2 * (b ** 2) - c ** 2)) / 2
-            return round(median_a, 2), round(median_b, 2), round(median_c, 2)
+            numbers_array = []
+            with open(f'files/inputs/task_{self.task_number}_input.txt') as f:
+                for line in f:
+                    splitted_line = line.split(' ')
+                    for number in splitted_line:
+                        numbers_array.append(int(number))
+            return numbers_array
         except Exception as e:
             print(f'Ошибка: {e}')
 
-    def __get_existing_triangle(self) -> tuple[int, int, int]:
+    def __do_task(self, numbers: []):
         try:
-            while True:
-                x = random.randint(1, 10)
-                y = random.randint(1, 10)
-                z = random.randint(1, 10)
-                if self.__is_exist(x, y, z):
-                    return x, y, z
+            sliced_numbers = list(zip(*[iter(numbers)] * 5))
+            numbers_from_max = []
+            for five_numbers in sliced_numbers:
+                numbers_from_max.append(max(five_numbers))
+            if len(numbers) % 5 != 0:
+                numbers_from_max.append(max(numbers[-(len(numbers) - (int(len(numbers) / 5)) * 5):]))
+            self.__save_file(numbers_from_max)
         except Exception as e:
             print(f'Ошибка: {e}')
 
-    @staticmethod
-    def __is_exist(x: int, y: int, z: int) -> bool:
+    def __save_file(self, numbers: []):
         try:
-            return x < y + z and y < x + z and z < x + y
+            with open(f'files/outputs/task_{self.task_number}_output.txt', "w") as output:
+                if len(numbers) == 0:
+                    output.write('Отсутствуют.')
+                else:
+                    for number in numbers:
+                        output.write("".join(
+                            f'{number}') + "\n")
+            print(f'Файл сохранен как files/outputs/task_{self.task_number}_output.txt')
         except Exception as e:
             print(f'Ошибка: {e}')
