@@ -27,6 +27,23 @@ class Book:
         self.year = year
 
 
+class Car:
+
+    def __init__(self, car_model, car_number, owner):
+        self.car_model = car_model
+        self.car_number = car_number
+        self.owner = owner
+
+
+class Human:
+
+    def __init__(self, name, gender, age, height):
+        self.name = name
+        self.gender = gender
+        self.age = age
+        self.height = height
+
+
 class Helper:
 
     @staticmethod
