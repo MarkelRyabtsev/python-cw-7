@@ -1,6 +1,4 @@
-import collections
 import json
-
 from helper import Human
 
 

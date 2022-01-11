@@ -3,12 +3,13 @@ import random
 
 class Student:
 
-    def __init__(self, student_id, first_name, last_name, class_number, class_letter):
+    def __init__(self, student_id, first_name, last_name, class_number, class_letter, grades=None):
         self.student_id = student_id
         self.first_name = first_name
         self.last_name = last_name
         self.class_number = class_number
         self.class_letter = class_letter
+        self.grades = grades
 
 
 class Cube:
