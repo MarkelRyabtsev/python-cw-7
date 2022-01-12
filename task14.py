@@ -1,5 +1,5 @@
 import json
-from helper import Helper, Student
+from helper import Student
 
 
 class Task14:
@@ -14,7 +14,6 @@ class Task14:
         return self.__class__.__task_number
 
     def start_task(self):
-        helper = Helper()
         print(f'------------------------- Задача {self.task_number} -------------------------')
         print('Сведения об ученике состоят из его имени и фамилии, названия класса (года обучения и буквы), в'
               '\nкотором он учится и отметки. Дан типизированный  файл f, содержащий сведения об учениках школы:'

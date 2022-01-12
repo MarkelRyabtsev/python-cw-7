@@ -1,5 +1,4 @@
 import re
-from helper import Helper
 
 
 class Task15:
@@ -14,42 +13,44 @@ class Task15:
         return self.__class__.__task_number
 
     def start_task(self):
-        helper = Helper()
-        print(f'------------------------- Задача {self.task_number} ДОДЕЛАТЬ -------------------------')
-        print('Вычислить функцию z(x)=x^2 и сумму членов ряда y=pi^2-4*(cosx - cos2x/2^2 + cos3x/3^2 - ...)'
-              '\nна диапазоне [-pi;pi]. Очередной элемент включается в сумму, если его значение по модулю превышает'
-              '\nнекоторое заранее заданное число P, определяемое с требуемой точностью вычислений. P=0.001')
+        print(f'------------------------- Задача {self.task_number} -------------------------')
+        print('Дан текстовый файл f. Записать в файл g компоненты файла f в обратном порядке. Даны текстовые'
+              '\nфайлы m и n. Записать в файл h сначала компоненты файла m, затем - компоненты'
+              '\nфайла n с сохранением порядка')
         print('----------------------------------------------------------')
-        random_text = helper.get_random_short_text_eng()
-        print(random_text)
+        text_a = self.__get_text('a')
+        text_b_1 = self.__get_text('b_1')
+        text_b_2 = self.__get_text('b_2')
+        self.__do_task_a(text_a)
         print('----------------------------------------------------------')
-        formatted_text = helper.remove_line_feed(random_text)
-        self.__print_count_and_remove_double_letters(formatted_text)
+        self.__do_task_b(text_b_1, text_b_2)
         print('----------------------------------------------------------')
         self.task_ended_callback(self.task_number)
 
-    def __print_count_and_remove_double_letters(self, text: str):
+    def __get_text(self, variant: str) -> str:
         try:
-            words_array = re.findall(r"[\w']+", text)
-            words_array_changed = []
-            for word in words_array:
-                changed_word = self.__check_letters(word)
-                words_array_changed.append(changed_word)
-            new_text = ' '.join(words_array_changed)
-            print(new_text)
-            print('----------------------------------------------------------')
-            new_words_array = re.findall(r"[\w']+", new_text)
-            print(f'Количество слов: {len(new_words_array)}')
+            with open(f'files/inputs/task_{self.task_number}_input_{variant}.txt') as f:
+                return f.read()
         except Exception as e:
             print(f'Ошибка: {e}')
 
-    @staticmethod
-    def __check_letters(word: str) -> str:
+    def __do_task_a(self, text: str):
         try:
-            new_word = list(word)
-            if new_word[0] == new_word[len(word) - 1]:
-                return ''
-            else:
-                return ' '.join([''.join(new_word), ''.join(new_word)])
+            text_components = re.findall(r"[\w']+", text)
+            self.__save_file(' '.join(text_components[::-1]), 'a')
+        except Exception as e:
+            print(f'Ошибка: {e}')
+
+    def __do_task_b(self, text_m: str, text_n: str):
+        try:
+            self.__save_file(text_m + " " + text_n, 'b')
+        except Exception as e:
+            print(f'Ошибка: {e}')
+
+    def __save_file(self, text: [], task_variant: str):
+        try:
+            with open(f'files/outputs/task_{self.task_number}_output_{task_variant}.txt', "w") as output:
+                output.write(text)
+            print(f'{task_variant}) Файл сохранен как files/outputs/task_{self.task_number}_output_{task_variant}.txt')
         except Exception as e:
             print(f'Ошибка: {e}')

@@ -46,11 +46,8 @@ class Task11:
     @staticmethod
     def __do_task_b(text: str):
         try:
-            try:
-                count = text.lower().count('abcdefgh')
-                print(f'б) Сочетание \'abcdefgh\'{"" if count > 0 else " не"} входит в файл')
-            except Exception as e:
-                print(f'Ошибка: {e}')
+            count = text.lower().count('abcdefgh')
+            print(f'б) Сочетание \'abcdefgh\'{"" if count > 0 else " не"} входит в файл')
         except Exception as e:
             print(f'Ошибка: {e}')
 
